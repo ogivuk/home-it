@@ -23,17 +23,17 @@ The guide [Install Raspbian with SSH](Install Raspbian with SSH.md) covers all p
     curl -sSL https://get.docker.com | sh
     ```
     * If SSL certificate issues occur, see the [troubleshooting section](#troubleshooting) below.
-2. Add the user to docker group so that docker does not require sudo:
+3. Add the user to docker group so that docker does not require sudo:
 
     ```shell
     sudo usermod -aG docker $USER
     ```
-3. Enable docker to start with the system:
+4. Enable docker to start with the system:
 
     ```shell
     sudo systemctl enable docker
     ```
-4. Use `overlay2` storage driver for OverlayFS.
+5. Use `overlay2` storage driver for OverlayFS.
     * `overlay2` is recommended over `overlay`, because it is more efficient in terms of inode utilization.
     * `overlay2` requires Linux kernel version 4.0 or higher.
     1. Check which driver is in use:
@@ -68,7 +68,7 @@ The guide [Install Raspbian with SSH](Install Raspbian with SSH.md) covers all p
         ```shell
         docker info | grep "Storage Driver"
         ```
-5. [Optional] Install docker-compose:
+6. [Optional] Install docker-compose:
 
     ```shell
     sudo apt-get install -y docker-compose
