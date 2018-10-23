@@ -1,8 +1,29 @@
 # Transmission on Raspberry Pi as a Docker Container
 
+## Description
+
+The goal of this guide is to create a stateless container running `transmission`.
+In order to achieve that, the interfaces between the container and the host system needs to be properly designed. For example, all state information (e.g., configuration and downloaded data) needs to be stored on the actual host and attached to the container
+through volume binding/mounting.
+
+### Container Interfaces
+
+State information:
+
+* Configuration directory - where `transmission` looks for configuration files
+* Download directory - where `transmission` saves downloaded data
+* Watch directory - where `transmission` watches for new .torrent files
+
+Communication ports:
+
+* 9091/tcp
+* 51413/tcp
+* 51413/udp
+
+
+
 ## Prerequisites
 * Keep the settings file outside of the container
-
 
 # Build the docker image
 `$ docker build -t home-it/transmission .`
