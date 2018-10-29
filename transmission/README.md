@@ -1,6 +1,10 @@
 # Transmission on Raspberry Pi as a Docker Container
 
+2018-10-29, Ognjen Vuković
+
 ## Description
+
+`transmission` is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
 
 The goal of this guide is to create a stateless container running `transmission` that is:
 
@@ -11,18 +15,43 @@ The goal of this guide is to create a stateless container running `transmission`
 
 `transmission` state information is preserved in the following directories:
 
-* Configuration directory - where `transmission` looks for configuration files. The folder contains:
-  * `settings.json` file, there is a sample provided in this repository.
-* `download-dir` - where `transmission` saves downloaded data.
-  * The location is defined in the `settings.json` file, e.g., `/transmission/downloads`.
-* `incomplete-dir` - where `transmission` stores data not yet completely downloaded.
-  * The location is defined in the `settings.json` file, e.g., `/transmission/downloads`.
+* Configuration directory - where `transmission` looks for configuration files.
+  * The directory contains:
+    * `settings.json` file, there is a sample provided in this repository.
+  * The location of directory:
+    * The location can be set in the `TRANSMISSION_HOME` environment variable.
+    * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`.
+    * The location can also be passed at the run time as the argument `--config-dir`.
+* Download directory - where `transmission` saves downloaded data.
+  * The location of directory:
+    * The location is specified in the `settings.json` configuration file under `download-dir`, e.g., `/transmission/downloads`.
+* Incomplete download directory - where `transmission` stores data not yet completely downloaded.
+  * The location of directory:
+    * The location is specified in the `settings.json` configuration file under `incomplete-dir`.
+  * Enabling the directory:
+    * The directory is not enabled by default.
+    * To enable the directory, `incomplete-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
 * Watch directory - where `transmission` watches for new .torrent files
+  * The location of the directory:
+    * The location is specified in the `settings.json` configuration file under `watch-dir`, e.g., `transmission/watch-dir`.
+  * Enabling the directory:
+    * The directory is not enabled by default.
+    * TO enable the directory, `watch-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
 
-`transmission` needs to be able to listen on the following ports:
+`transmission` uses the following TCP and UDP communication ports:
 
-* 9091 (tcp) - used for accessing the web interface.
-* 51413 (tcp & udp) - used for incoming connections for data sharing.
+* Incoming/Listening ports:
+  * Web interface (TCP)
+    * The port number is specified in the configuration file as `rpc-port`
+    * The default value is `9091`
+  * Incoming connections for data sharing (TCP and UDP)
+    * The port number is specified in the configuration file as `peer-port`
+    * The default value is `51413`
+
+* Outgoing ports:
+  * Outgoing connections to establish connections with other peers (TCP and UDP).
+    * The port range is specified in the configuration file as from `peer-port-random-low` to `peer-port-random-high`
+    * The default range is `49152` to `65535`
 
 ## Prerequisites
 * Keep the settings file outside of the container
@@ -54,6 +83,8 @@ home-it/transmission
 # TZ for timezone information
 
 # Resources
+* https://github.com/transmission/transmission/wiki/Configuration-Files
+* https://github.com/transmission/transmission/wiki/Environment-Variables
 * https://github.com/silvinux/transmission-alpine
 * https://github.com/ezbiranik/docker-alpine-transmission
 * https://github.com/werwolfby-docker/armhf-alpine-transmission
