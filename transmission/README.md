@@ -17,6 +17,7 @@ State information:
 * Configuration directory - where `transmission` looks for configuration files
     * The location can be set in the `TRANSMISSION_HOME` environment variable
     * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`
+    * The location can also be passed at the run time as the argument `--config-dir`
 * Download directory - where `transmission` saves downloaded data
     * The location of the directory with downloaded files is specified in the configuration file as `download-dir`
     * The location of the directory with incomplete files is specified in the configuration file as `incomplete-dir`
