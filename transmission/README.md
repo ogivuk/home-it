@@ -2,25 +2,27 @@
 
 ## Description
 
-The goal of this guide is to create a stateless container running `transmission`.
-In order to achieve that, the interfaces between the container and the host system needs to be properly designed. For example, all state information (e.g., configuration and downloaded data) needs to be stored on the actual host and attached to the container
-through volume binding/mounting.
+The goal of this guide is to create a stateless container running `transmission` that is:
+
+* based on an image built from scratch (well known image + installation) using a Dockerfile.
+* stateless, with all interfaces (state information + communication ports) well defined.
 
 ### Container Interfaces
 
-State information:
+`transmission` state information is preserved in the following directories:
 
-* Configuration directory - where `transmission` looks for configuration files
-* Download directory - where `transmission` saves downloaded data
+* Configuration directory - where `transmission` looks for configuration files. The folder contains:
+  * `settings.json` file, there is a sample provided in this repository.
+* `download-dir` - where `transmission` saves downloaded data.
+  * The location is defined in the `settings.json` file, e.g., `/transmission/downloads`.
+* `incomplete-dir` - where `transmission` stores data not yet completely downloaded.
+  * The location is defined in the `settings.json` file, e.g., `/transmission/downloads`.
 * Watch directory - where `transmission` watches for new .torrent files
 
-Communication ports:
+`transmission` needs to be able to listen on the following ports:
 
-* 9091/tcp
-* 51413/tcp
-* 51413/udp
-
-
+* 9091 (tcp) - used for accessing the web interface.
+* 51413 (tcp & udp) - used for incoming connections for data sharing.
 
 ## Prerequisites
 * Keep the settings file outside of the container
