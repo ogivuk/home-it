@@ -18,9 +18,9 @@ The guide has been verified on:
 
 ### Container Interfaces
 
-`transmission` state information is preserved in the following directories:
+**`transmission` state information** is preserved in the following directories:
 
-* Configuration directory - where `transmission` looks for configuration files.
+* **Configuration directory** - where `transmission` looks for configuration files.
   * The directory contains:
     * `settings.json` file, there is a sample provided in this repository.
     * `torrents/` folder with .torrent files.
@@ -28,23 +28,23 @@ The guide has been verified on:
     * The location can be set in the `TRANSMISSION_HOME` environment variable.
     * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`.
     * The location can also be passed at the run time as the argument `--config-dir`.
-* Download directory - where `transmission` saves downloaded data.
+* **Download directory** - where `transmission` saves downloaded data.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `download-dir`, e.g., `/transmission/downloads`.
-* Incomplete download directory - where `transmission` stores data not yet completely downloaded.
+* **Incomplete download directory** - where `transmission` stores data not yet completely downloaded.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `incomplete-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * To enable the directory, `incomplete-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
-* Watch directory - where `transmission` watches for new .torrent files
+* **Watch directory** - where `transmission` watches for new .torrent files
   * The location of the directory:
     * The location is specified in the `settings.json` configuration file under `watch-dir`, e.g., `transmission/watch-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * TO enable the directory, `watch-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
 
-`transmission` uses the following TCP and UDP communication ports:
+**`transmission` uses the following TCP and UDP communication ports**:
 
 * Incoming/Listening ports:
   * Web interface (TCP)
@@ -59,7 +59,7 @@ The guide has been verified on:
     * The port range is specified in the configuration file as from `peer-port-random-low` to `peer-port-random-high`
     * The default range is `49152` to `65535`
 
-Handling file ownership and access control:
+**Handling file ownership and access control**:
 
 * The owner of files created and downloaded by a `transmission` container is the user used within the image to execute `ENTRYPOINT`, `RUN`, and `CMD`. The default user is `root` with `UID=0`.
 * A proper user should be set in the Docker image for maintaining the consistancy of file ownership and for handling access right in the attached storage where the `transmissiomn` state and downloaded files are preserved.
@@ -72,32 +72,47 @@ Handling file ownership and access control:
 
 * Host running Linux
 * Docker installed
-* The guide [Install Raspbian with SSH](../raspberry-pi/Install Raspbian with SSH.md) covers the necessary steps for a Raspberry Pi host.
+* The guide [Install Raspbian with SSH](../raspberry-pi/Install%20Raspbian%20with%20SSH.md) covers the necessary steps for a Raspberry Pi host.
 
-## Build the docker image
+## Step-by-Step Guide
 
-`docker build --build-arg TGID=$(id -g $USER) --build-arg TUID=$(id -u $USER) -t home-it/transmission .`
+1. Build the docker image based on the provided [Dockerfile](Dockerfile):
 
-## Create a container
+    ```shell
+    docker build \
+      --build-arg TUID=$(id -u $USER) \
+      --build-arg TGID=$(id -g $USER) \
+      -t home-it/transmission .
+    ```
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by `transmission` will be owned by the current user.
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
+2. Create a container
 
-```shell
-docker create --name=transmission \
--v /media/mycloud/Downloads/Torrents/_transmission/config:/transmission/config \
--v /media/mycloud/Downloads/Torrents:/transmission/downloads \
--v /media/mycloud/Downloads/Torrents/_transmission/watch:/transmission/watch \
--p 9091:9091 -p 51413:51413 -p 51413:51413/udp \
-home-it/transmission
-```
+    ```shell
+    docker create --name=transmission \
+      -v /path/to/dir/for/transmission/config:/transmission/config \
+      -v /path/to/dir/for/downloads:/transmission/downloads \
+      -v /path/to/dir/for/transmission/watch:/transmission/watch \
+      -p 9091:9091 -p 51413:51413 -p 51413:51413/udp \
+      home-it/transmission
+    ```
+    * `--name=transmission` names the container as `transmission`.
+    * `-p 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+3. Run the container
 
-## Run the container
+    ```shell
+    docker start transmission
+    ```
+4. Stop the container
 
-`docker start transmission`
+    ```shell
+    docker stop transmission
+    ```
 
-## Stop the container
-
-`docker stop transmission`
-
-## Resources
+## Sources
 
 * https://github.com/transmission/transmission/wiki/Configuration-Files
 * https://github.com/transmission/transmission/wiki/Environment-Variables
