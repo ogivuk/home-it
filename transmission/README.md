@@ -27,7 +27,7 @@ The guide has been verified on:
   * The location of directory:
     * The location can be set in the `TRANSMISSION_HOME` environment variable.
     * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`.
-    * The location can also be passed at the run time as the argument `--config-dir`.
+    * The location can also be passed when starting transmission as the argument `--config-dir`.
 * **Download directory** - where transmission saves downloaded data.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `download-dir`, e.g., `/transmission/downloads`.
