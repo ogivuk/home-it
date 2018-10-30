@@ -86,7 +86,25 @@ The guide has been verified on:
     ```
     * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
     * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
-2. Create a container
+2. Prepare/create directories on the host
+
+    * If they do not exist, create the directories on the host for storing the configuration files, for the watch files, and for the downloaded files. Optionally, also create a directory for incomplete files, if a dedicated one is used.
+    ```shell
+    mkdir -p /path/to/dir/for/transmission/config
+    mkdir -p /path/to/dir/for/downloads
+    mkdir -p /path/to/dir/for/transmission/watch
+    ```
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+3. [Optional] Use the provided `settings.json` file.
+
+    ```shell
+    cp settings.json /path/to/dir/for/transmission/config
+    ```
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * note that the provided configuration **is not secure**. Consider enabling the rpc authentication and the host whitelist.
+4. Create a container
 
     ```shell
     docker create --name=transmission \
@@ -101,12 +119,13 @@ The guide has been verified on:
     * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
     * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
     * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
-3. Run the container
+    * optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
+5. Run the container
 
     ```shell
     docker start transmission
     ```
-4. Stop the container
+6. Stop the container
 
     ```shell
     docker stop transmission
