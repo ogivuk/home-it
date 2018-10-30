@@ -12,6 +12,7 @@ This is a guide on how to install Docker on Raspberry Pi.
 * SSH server running on Raspberry Pi, or a screen and a keyboard connected to the Raspberry Pi
 * User with sudo rights
 * Internet access
+
 The guide [Install Raspbian with SSH](Install Raspbian with SSH.md) covers all prerequisites.
 
 ## Step-by-Step Guide
@@ -19,7 +20,7 @@ The guide [Install Raspbian with SSH](Install Raspbian with SSH.md) covers all p
 1. Login to the Raspberry Pi via SSH or directly using a screen and a keyboard.
 2. Get and execute the official Docker installation script:
 
-    ```shell 
+    ```shell
     curl -sSL https://get.docker.com | sh
     ```
     * If SSL certificate issues occur, see the [troubleshooting section](#troubleshooting) below.
