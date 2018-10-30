@@ -4,9 +4,9 @@
 
 ## Description
 
-`transmission` is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
+**Transmission** is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
 
-The goal of this guide is to create a stateless container running `transmission` that is:
+The goal of this guide is to create a stateless container running transmission that is:
 
 * based on an image built from scratch (well known image + installation) using a Dockerfile.
 * stateless, with all interfaces (state information + communication ports) well defined.
@@ -18,9 +18,9 @@ The guide has been verified on:
 
 ### Container Interfaces
 
-**`transmission` state information** is preserved in the following directories:
+**Transmission state information** is preserved in the following directories:
 
-* **Configuration directory** - where `transmission` looks for configuration files.
+* **Configuration directory** - where transmission looks for configuration files.
   * The directory contains:
     * `settings.json` file, there is a sample provided in this repository.
     * `torrents/` folder with .torrent files.
@@ -28,23 +28,23 @@ The guide has been verified on:
     * The location can be set in the `TRANSMISSION_HOME` environment variable.
     * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`.
     * The location can also be passed at the run time as the argument `--config-dir`.
-* **Download directory** - where `transmission` saves downloaded data.
+* **Download directory** - where transmission saves downloaded data.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `download-dir`, e.g., `/transmission/downloads`.
-* **Incomplete download directory** - where `transmission` stores data not yet completely downloaded.
+* **Incomplete download directory** - where transmission stores data not yet completely downloaded.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `incomplete-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * To enable the directory, `incomplete-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
-* **Watch directory** - where `transmission` watches for new .torrent files
+* **Watch directory** - where transmission watches for new .torrent files
   * The location of the directory:
     * The location is specified in the `settings.json` configuration file under `watch-dir`, e.g., `transmission/watch-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * TO enable the directory, `watch-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
 
-**`transmission` uses the following TCP and UDP communication ports**:
+**Transmission uses the following TCP and UDP communication ports**:
 
 * Incoming/Listening ports:
   * Web interface (TCP)
@@ -61,8 +61,8 @@ The guide has been verified on:
 
 **Handling file ownership and access control**:
 
-* The owner of files created and downloaded by a `transmission` container is the user used within the image to execute `ENTRYPOINT`, `RUN`, and `CMD`. The default user is `root` with `UID=0`.
-* A proper user should be set in the Docker image for maintaining the consistancy of file ownership and for handling access right in the attached storage where the `transmissiomn` state and downloaded files are preserved.
+* The owner of files created and downloaded by a transmission container is the user specified within the image to execute `ENTRYPOINT`, `RUN`, and `CMD`. The default user is `root` with `UID=0`.
+* A proper user should be set in the Docker image for maintaining the consistancy of file ownership and for handling access right in the attached storage where the transmission state and downloaded files are preserved.
 * Setting the user:
   * The `USER` instruction in Dockerfile sets the user UID and optionally the user group GID.
   * UID and GID can be passed as build-time variables using the `--build-arg` argument to `docker build`.
@@ -84,7 +84,7 @@ The guide has been verified on:
       --build-arg TGID=$(id -g $USER) \
       -t home-it/transmission .
     ```
-    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by `transmission` will be owned by the current user.
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
     * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
 2. Create a container
 
