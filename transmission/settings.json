@@ -20,7 +20,7 @@
     "idle-seeding-limit-enabled": false,
     "incomplete-dir": "/transmission/downloads",
     "incomplete-dir-enabled": false,
-    "lpd-enabled": true,
+    "lpd-enabled": false,
     "message-level": 1,
     "peer-congestion-algorithm": "",
     "peer-id-ttl-hours": 6,

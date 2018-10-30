@@ -76,7 +76,7 @@ Handling file ownership and access control:
 
 ## Build the docker image
 
-`docker build --build-arg TGID=$(id -g $USER) TUID=$(id -u $USER) -t home-it/transmission .`
+`docker build --build-arg TGID=$(id -g $USER) --build-arg TUID=$(id -u $USER) -t home-it/transmission .`
 
 ## Create a container
 
