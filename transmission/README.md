@@ -88,7 +88,7 @@ The guide has been verified on:
     * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
 2. Prepare/create directories on the host
 
-    * If they do not exist, create the directories on the host for storing the configuration files, for the watch files, and for the downloaded files. Optionally, also create a directory for incomplete files, if a dedicated one is used.
+    * If they do not already exist, create directories on the host for storing configuration files, watch files, and downloaded files. Optionally, also create a directory for incomplete files, if a dedicated one is used.
     ```shell
     mkdir -p /path/to/dir/for/transmission/config
     mkdir -p /path/to/dir/for/downloads

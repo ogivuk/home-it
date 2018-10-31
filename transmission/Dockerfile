@@ -22,7 +22,7 @@ RUN echo ${TUID}
 RUN echo ${TGID}
 
 # Create a user with the given UID and GID
-RUN adduser -D -u $TUID -g $TGID transmission
+RUN adduser -D -u $TUID -g $TGID tuser
 
 # Create the shared folders and give the ownership to the given user
 RUN mkdir -p /transmission/config && \
@@ -31,7 +31,7 @@ RUN mkdir -p /transmission/config && \
     chown -R $TUID:$TGID /transmission
 
 # Set the user to the newly created user
-USER transmission:transmission
+USER tuser:tuser
 
 ENV TRANSMISSION_HOME="/transmission/config"
 
