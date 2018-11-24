@@ -107,7 +107,9 @@ The guide has been verified on:
 4. Create a container
 
     ```shell
-    docker create --name=transmission \
+    docker create \
+      --name=transmission \
+      --restart always \
       -v /path/to/dir/for/transmission/config:/transmission/config \
       -v /path/to/dir/for/downloads:/transmission/downloads \
       -v /path/to/dir/for/transmission/watch:/transmission/watch \
@@ -115,6 +117,7 @@ The guide has been verified on:
       home-it/transmission
     ```
     * `--name=transmission` names the container as `transmission`.
+    * `--restart always` configures the restart policy to always restart the container if it stops.
     * `-p 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
     * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
     * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
