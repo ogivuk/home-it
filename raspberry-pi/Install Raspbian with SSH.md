@@ -55,6 +55,7 @@ This is a guide on how to set up a Raspberry Pi with the Raspbian Lite OS and an
     sudo apt-get update && sudo apt-get -y upgrade
     ```
 11. Reboot:
+
     ```shell
     sudo reboot
     ```
@@ -62,7 +63,7 @@ This is a guide on how to set up a Raspberry Pi with the Raspbian Lite OS and an
 ## Troubleshooting
 
 * If the client gets "Connection reset by ... port 22":
-    1. Run ```$ sudo service ssh status ``` on the Raspberry Pi.
+    1. Run ```$ sudo service ssh status``` on the Raspberry Pi.
     2. If there are errors such as ```error: Could not load host key: /etc/ssh/ssh_host*``` then,
     3. Run ```$ sudo rm /etc/ssh/ssh_host_* && sudo dpkg-reconfigure openssh-server```.
 
@@ -71,4 +72,3 @@ This is a guide on how to set up a Raspberry Pi with the Raspbian Lite OS and an
 * https://thepihut.com/blogs/raspberry-pi-tutorials/19668676-renaming-your-raspberry-pi-the-hostname
 * https://blog.alexellis.io/getting-started-with-docker-on-raspberry-pi/
 * https://www.raspberrypi.org/forums/viewtopic.php?t=15814
-
