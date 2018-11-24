@@ -81,7 +81,9 @@ Handling file ownership and access control:
 ## Create a container
 
 ```shell
-docker create --name=transmission \
+docker create \
+--name=transmission \
+--restart always \
 -v /media/mycloud/Downloads/Torrents/_transmission/config:/transmission/config \
 -v /media/mycloud/Downloads/Torrents:/transmission/downloads \
 -v /media/mycloud/Downloads/Torrents/_transmission/watch:/transmission/watch \
