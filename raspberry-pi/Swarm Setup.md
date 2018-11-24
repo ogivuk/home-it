@@ -1,4 +1,4 @@
-# Set up Swarm on Raspberry Pi(s)
+# Set up Swarm on Raspberry Pis
 
 2018-11-24, Ognjen Vuković
 
