@@ -4,9 +4,9 @@
 
 ## Description
 
-`transmission` is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
+**Transmission** is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
 
-The goal of this guide is to create a stateless container running `transmission` that is:
+The goal of this guide is to create a stateless container running transmission that is:
 
 * based on an image built from scratch (well known image + installation) using a Dockerfile.
 * stateless, with all interfaces (state information + communication ports) well defined.
@@ -18,33 +18,33 @@ The guide has been verified on:
 
 ### Container Interfaces
 
-`transmission` state information is preserved in the following directories:
+**Transmission state information** is preserved in the following directories:
 
-* Configuration directory - where `transmission` looks for configuration files.
+* **Configuration directory** - where transmission looks for configuration files.
   * The directory contains:
     * `settings.json` file, there is a sample provided in this repository.
     * `torrents/` folder with .torrent files.
   * The location of directory:
     * The location can be set in the `TRANSMISSION_HOME` environment variable.
     * If `TRANSMISSION_HOME` is not set, the default location on Unix-based systems is `$HOME/.config/`.
-    * The location can also be passed at the run time as the argument `--config-dir`.
-* Download directory - where `transmission` saves downloaded data.
+    * The location can also be passed when starting transmission as the argument `--config-dir`.
+* **Download directory** - where transmission saves downloaded data.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `download-dir`, e.g., `/transmission/downloads`.
-* Incomplete download directory - where `transmission` stores data not yet completely downloaded.
+* **Incomplete download directory** - where transmission stores data not yet completely downloaded.
   * The location of directory:
     * The location is specified in the `settings.json` configuration file under `incomplete-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * To enable the directory, `incomplete-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
-* Watch directory - where `transmission` watches for new .torrent files
+* **Watch directory** - where transmission watches for new .torrent files
   * The location of the directory:
     * The location is specified in the `settings.json` configuration file under `watch-dir`, e.g., `transmission/watch-dir`.
   * Enabling the directory:
     * The directory is not enabled by default.
     * TO enable the directory, `watch-dir-enabled` needs to be set to `true` in the `settings.json` configuration file.
 
-`transmission` uses the following TCP and UDP communication ports:
+**Transmission uses the following TCP and UDP communication ports**:
 
 * Incoming/Listening ports:
   * Web interface (TCP)
@@ -59,10 +59,10 @@ The guide has been verified on:
     * The port range is specified in the configuration file as from `peer-port-random-low` to `peer-port-random-high`
     * The default range is `49152` to `65535`
 
-Handling file ownership and access control:
+**Handling file ownership and access control**:
 
-* The owner of files created and downloaded by a `transmission` container is the user used within the image to execute `ENTRYPOINT`, `RUN`, and `CMD`. The default user is `root` with `UID=0`.
-* A proper user should be set in the Docker image for maintaining the consistancy of file ownership and for handling access right in the attached storage where the `transmissiomn` state and downloaded files are preserved.
+* The owner of files created and downloaded by a transmission container is the user specified within the image to execute `ENTRYPOINT`, `RUN`, and `CMD`. The default user is `root` with `UID=0`.
+* A proper user should be set in the Docker image for maintaining the consistancy of file ownership and for handling access right in the attached storage where the transmission state and downloaded files are preserved.
 * Setting the user:
   * The `USER` instruction in Dockerfile sets the user UID and optionally the user group GID.
   * UID and GID can be passed as build-time variables using the `--build-arg` argument to `docker build`.
@@ -72,34 +72,69 @@ Handling file ownership and access control:
 
 * Host running Linux
 * Docker installed
-* The guide [Install Raspbian with SSH](../raspberry-pi/Install Raspbian with SSH.md) covers the necessary steps for a Raspberry Pi host.
+* The guide [Install Raspbian with SSH](../raspberry-pi/Install%20Raspbian%20with%20SSH.md) covers the necessary steps for a Raspberry Pi host.
 
-## Build the docker image
+## Step-by-Step Guide
 
-`docker build --build-arg TGID=$(id -g $USER) --build-arg TUID=$(id -u $USER) -t home-it/transmission .`
+1. Build the docker image based on the provided [Dockerfile](Dockerfile):
 
-## Create a container
+    ```shell
+    docker build \
+      --build-arg TUID=$(id -u $USER) \
+      --build-arg TGID=$(id -g $USER) \
+      -t home-it/transmission .
+    ```
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
+2. Prepare/create directories on the host
 
-```shell
-docker create \
---name=transmission \
---restart always \
--v /media/mycloud/Downloads/Torrents/_transmission/config:/transmission/config \
--v /media/mycloud/Downloads/Torrents:/transmission/downloads \
--v /media/mycloud/Downloads/Torrents/_transmission/watch:/transmission/watch \
--p 9091:9091 -p 51413:51413 -p 51413:51413/udp \
-home-it/transmission
-```
+    * If they do not exist, create the directories on the host for storing the configuration files, for the watch files, and for the downloaded files. Optionally, also create a directory for incomplete files, if a dedicated one is used.
+    ```shell
+    mkdir -p /path/to/dir/for/transmission/config
+    mkdir -p /path/to/dir/for/downloads
+    mkdir -p /path/to/dir/for/transmission/watch
+    ```
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+3. [Optional] Use the provided `settings.json` file.
 
-## Run the container
+    ```shell
+    cp settings.json /path/to/dir/for/transmission/config
+    ```
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * note that the provided configuration **is not secure**. Consider enabling the rpc authentication and the host whitelist.
+4. Create a container
 
-`docker start transmission`
+    ```shell
+    docker create \
+      --name=transmission \
+      --restart always \
+      -v /path/to/dir/for/transmission/config:/transmission/config \
+      -v /path/to/dir/for/downloads:/transmission/downloads \
+      -v /path/to/dir/for/transmission/watch:/transmission/watch \
+      -p 9091:9091 -p 51413:51413 -p 51413:51413/udp \
+      home-it/transmission
+    ```
+    * `--name=transmission` names the container as `transmission`.
+    * `--restart always` configures the restart policy to always restart the container if it stops.
+    * `-p 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
+    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+    * optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
+5. Run the container
 
-## Stop the container
+    ```shell
+    docker start transmission
+    ```
+6. Stop the container
 
-`docker stop transmission`
+    ```shell
+    docker stop transmission
+    ```
 
-## Resources
+## Sources
 
 * https://github.com/transmission/transmission/wiki/Configuration-Files
 * https://github.com/transmission/transmission/wiki/Environment-Variables

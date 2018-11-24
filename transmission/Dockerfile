@@ -36,4 +36,4 @@ USER transmission:transmission
 ENV TRANSMISSION_HOME="/transmission/config"
 
 # Run the transmission-daemon as the user
-CMD ["/usr/bin/transmission-daemon", "--foreground", "--config-dir", "/transmission/config"]
+CMD ["/usr/bin/transmission-daemon", "--foreground"]
