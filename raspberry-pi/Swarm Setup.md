@@ -66,17 +66,40 @@ The guides [Install Raspbian with SSH](Install%20Raspbian%20with%20SSH.md) and [
       --name=visualizer \
       --publish=8080:8080/tcp \
       --constraint=node.role==manager \
-      --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+      --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
       alexellis2/visualizer-arm:latest
     ```
     * `--name=visualizer` names the service as `visualizer`.
     * `--publish=8080:8080/tcp` exposes the port `8080` outside of swarm. It can be replaced with arbitrary port if `8080` is already used.
     * `--constraint=node.role==manager` limits the task to be deployed only on manager nodes.
-    * `--mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock` allows the task to talk to the Docker daemon.
+    * `--mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock` allows the task to talk to the Docker daemon.
     * `alexellis2/visualizer-arm:latest` is the image for ARMv6 or ARMv7 devices, including Raspberry Pi.
 * The visualizer can be accessed using a browser and accessing any node in the Swarm on the exposed port, `8080` by default.
+
+### Portainer
+
+* Portainer is a simple management solution for Docker. It allows an easy management of Docker containers, images, networks and volumes.
+* Run Portainer as a swarm service:
+
+    ```shell
+    docker service create \
+      --name portainer \
+      --publish 9000:9000 \
+      --constraint node.role==manager \
+      --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+      --mount type=bind,src=//path/on/host/data,dst=/data \
+      portainer/portainer
+    ```
+    * `--name portainer` names the service as `portainer`.
+    * `--publish 9000:9000` exposes the port `9000` outside of swarm. It can be replaced with arbitrary port if `9000` is already used.
+    * `--constraint node.role==manager` limits the task to be deployed only on manager nodes.
+    * `--mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock` allows the task to talk to the Docker daemon.
+    * `--mount type=bind,src=//path/on/host/data,dst=/data` attaches permanent storage for Portainer to store its data. Replace `//path/on/host/data` with the appropriate folder on the host.
+    * `portainer/portainer` is the official portainer image. There is support for ARM devices, including Raspberry Pi.
+* Portainer can be accessed using a browser and accessing any node in the Swarm on the exposed port, `9000` by default.
 
 ## Sources
 
 * https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/
 * https://github.com/dockersamples/docker-swarm-visualizer
+* https://portainer.readthedocs.io/en/latest/deployment.html
