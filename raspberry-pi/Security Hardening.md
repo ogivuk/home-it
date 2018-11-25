@@ -83,13 +83,13 @@ Protect against brute force SSH attacks, where an attacker tries to establish a 
         id new_user
         ```
         * replace `new_user` with the corresponding username.
-    * Assign to `pi` a temporary UID and GID not already in use (e.g., 2000):
+    * Log in as the new user, and assign to `pi` a temporary UID and GID not already in use (e.g., 2000):
 
         ```shell
         sudo usermod -u 2000 pi
         sudo groupmod -g 2000 pi
         ```
-    * Assign to the new user the old `pi` UID and GID. Assuming 1000 for both:
+    * Log in as the `pi` user, and assign to the new user the old `pi` UID and GID. Assuming 1000 for both:
 
         ```shell
         sudo usermod -u 1000 new_user
@@ -106,7 +106,7 @@ Protect against brute force SSH attacks, where an attacker tries to establish a 
     * Note that all files and folders previously created by `pi` will be assigned to the new user.
     * The user and the group `pi` can not be removed.
 6. Remove the `pi` user and the `pi` group.
-    * Remove the `pi` user:
+    * Log in as the new user, and remove the `pi` user:
 
         ```shell
         sudo deluser -remove-home pi
