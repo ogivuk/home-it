@@ -32,6 +32,7 @@ The guide [Swarm Setup](raspberry-pi/Swarm%20Setup.md) explains how to set up a 
 
     ```shell
     sudo mkdir -p /path/to/gitlab-runner/config
+    sudo chown -R $(id -u):$(id -g) /path/to/gitlab-runner/config
     ```
     * Replace `/path/to/gitlab-runner/config` with an appropriate path on the host.
 3. Register the GitLab runner as a Docker service
