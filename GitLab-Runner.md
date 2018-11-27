@@ -1,4 +1,4 @@
-# Set Up GitLab CI/CD Runner on Raspberry Pi as a Docker Container (on Docker Swarm)
+# Set Up GitLab CI/CD Runner as a Docker Container (on Docker Swarm)
 
 2018-11-26, Ognjen Vuković
 
