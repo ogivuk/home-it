@@ -151,8 +151,6 @@ docker service create \
 * Replace `/path/to/gitlab-runner/config` with the appropriate path on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
 * `--volume /var/run/docker.sock:/var/run/docker.sock` is required so that the runner can interact with Docker.
 * [`klud/gitlab-runner`](https://hub.docker.com/r/klud/gitlab-runner/) is an image built for ARM devices, based on the official repository of the GitLab Runner.
-* Notes:
-    * `docker exec` only works with currently running containers, and therefore, we used `docker run` here.
 
 ## Sources
 
