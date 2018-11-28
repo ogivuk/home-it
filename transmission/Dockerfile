@@ -18,9 +18,6 @@ ENV TUID ${TUID:-1000}
 ARG TGID
 ENV TGID ${TGID:-1000}
 
-RUN echo ${TUID}
-RUN echo ${TGID}
-
 # Create a user with the given UID and GID
 RUN adduser -D -u $TUID -g $TGID tuser
 
