@@ -115,10 +115,10 @@ The guide has been verified on:
 docker run -d \
     --name=transmission \
     --restart always \
+    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
     --volume /path/to/dir/for/transmission/config:/transmission/config \
     --volume /path/to/dir/for/downloads:/transmission/downloads \
     --volume /path/to/dir/for/transmission/watch:/transmission/watch \
-    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
     home-it/transmission
 ```
 * `--name=transmission` names the container as `transmission`, and it can be replaced with another desired name.
