@@ -76,6 +76,8 @@ The guide has been verified on:
 
 ## Step-by-Step Guide
 
+### Prepare Environment
+
 1. Build the docker image based on the provided [Dockerfile](Dockerfile):
 
     ```shell
@@ -104,35 +106,45 @@ The guide has been verified on:
     ```
     * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
     * note that the provided configuration **is not secure**. Consider enabling the rpc authentication and the host whitelist.
-4. Create a container
 
-    ```shell
-    docker create \
-      --name=transmission \
-      --restart always \
-      -v /path/to/dir/for/transmission/config:/transmission/config \
-      -v /path/to/dir/for/downloads:/transmission/downloads \
-      -v /path/to/dir/for/transmission/watch:/transmission/watch \
-      -p 9091:9091 -p 51413:51413 -p 51413:51413/udp \
-      home-it/transmission
-    ```
-    * `--name=transmission` names the container as `transmission`.
-    * `--restart always` configures the restart policy to always restart the container if it stops.
-    * `-p 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
-    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
-    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
-    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
-    * optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
-5. Run the container
+### Start Transmission
 
-    ```shell
-    docker start transmission
-    ```
-6. Stop the container
+#### On a Docker Host
 
-    ```shell
-    docker stop transmission
-    ```
+```shell
+docker run -d \
+    --name=transmission \
+    --restart always \
+    --volume /path/to/dir/for/transmission/config:/transmission/config \
+    --volume /path/to/dir/for/downloads:/transmission/downloads \
+    --volume /path/to/dir/for/transmission/watch:/transmission/watch \
+    --publish 9091:9091 -p 51413:51413 -p 51413:51413/udp \
+    home-it/transmission
+```
+* `--name=transmission` names the container as `transmission`, and it can be replaced with another desired name.
+* `--restart always` configures the restart policy to always restart the container if it stops.
+* `--publish 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
+* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
+
+#### In a Docker Swarm
+
+```shell
+docker service create \
+    --name=transmission \
+    --mount type=bind,src=/path/to/dir/for/transmission/config,dst=/transmission/config \
+    --mount type=bind,src=/path/to/dir/for/downloads,dst=/transmission/downloads \
+    --mount type=bind,src=/path/to/dir/for/transmission/watch,dst=/transmission/watch \
+    --publish 9091:9091 -p 51413:51413 -p 51413:51413/udp \
+    home-it/transmission
+```
+* `--name=transmission` names the service as `transmission`, and it can be replaced with another desired name.
+* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
 
 ## Sources
 
