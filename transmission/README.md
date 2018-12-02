@@ -123,7 +123,7 @@ docker run -d \
 ```
 * `--name=transmission` names the container as `transmission`, and it can be replaced with another desired name.
 * `--restart always` configures the restart policy to always restart the container if it stops.
-* `--publish 9091:9091 -p 51413:51413 -p 51413:51413/udp` exposes the required ports.
+* `--publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp` exposes the required ports.
 * Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
 * Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
 * Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
@@ -137,13 +137,16 @@ docker service create \
     --mount type=bind,src=/path/to/dir/for/transmission/config,dst=/transmission/config \
     --mount type=bind,src=/path/to/dir/for/downloads,dst=/transmission/downloads \
     --mount type=bind,src=/path/to/dir/for/transmission/watch,dst=/transmission/watch \
-    --publish 9091:9091 -p 51413:51413 -p 51413:51413/udp \
+    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
     home-it/transmission
 ```
 * `--name=transmission` names the service as `transmission`, and it can be replaced with another desired name.
-* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host. This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
 * Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
 
 ## Sources
