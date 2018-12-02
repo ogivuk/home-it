@@ -82,7 +82,14 @@ This guide is for setting up a static key configurations. The static key configu
     * `--user $(id -u):$(id -g)` instructs the Docker daemon to run the process in the container as the current user.
         * This is needed so that the ownership of the generated `static.key` file is set properly.
 5. Firewall/Port forwarding
-6. IP routing on the host
+    * UDP port 1194 must be open (not blocked by firewall) on the server.
+    * The virtual TUN interface must not be blocked on either the client or server.
+    * If the server is behind NAT, a port forwarding needs to be set up.
+6. Enable IP Forwarding on the OpenVPN server (and client if needed):
+
+    ```shell
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    ```
 
 ### Start the OpenVPN
 
