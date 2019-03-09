@@ -33,23 +33,12 @@ Rsync is typically used for synchronizing files and directories between two diff
 
 ### Using Rsync
 
-Local:
-  
-  * ```bash
-    rsync [OPTIONS] SRC DEST
-    ```
+Local: ```rsync [OPTIONS] SRC DEST```
 
 Remote:
-* Pull:
-  
-  ```bash
-  rsync [OPTIONS] [USER@]HOST:SRC DEST
-  ```
-* Push:
-  
-  ```bash
-  rsync [OPTIONS] SRC [USER@]HOST:DEST
-  ```
+
+* Pull: ```rsync [OPTIONS] [USER@]HOST:SRC DEST```
+* Push: ```rsync [OPTIONS] SRC [USER@]HOST:DEST```
 
 Useful options:
 * `-a` indicates to use recursion and to preserve almost everything (e.g., file ownership)
@@ -59,16 +48,7 @@ Useful options:
 * `--dry-run` makes rsync perform a trial run that doesn’t make any changes. Use with `-v`
 
 
-### Examples
-
-* Synchronize 2 folders on the same host:
-
-  ```bash
-  rsync -a --delete --exclude=PATTERN /src/dir /dst/dir
-  ```
-
-
-
 # Links
 
 * [Cron Wikipedia](https://en.wikipedia.org/wiki/Cron)
+* [Rsync Wikipedia](https://en.wikipedia.org/wiki/Rsync)
