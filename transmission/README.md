@@ -5,9 +5,9 @@
 The goal of this repository is to provide means to create a stateless container running transmission that is:
 
 * based on an image built from scratch (well known image + installation) using a Dockerfile. The Dockerfile is provided in this repository.
-* stateless, with all interfaces (state information + communication ports) well defined. More information about the interfaces can be found [below](#Interfaces).
+* stateless, with all interfaces (state information + communication ports) well defined. More information about the interfaces can be found below in `Interfaces`.
 
-The supported architectures are:
+Supported architectures are:
 
 * **x64** (default) tagged as `:latest` and `:x64`, verified on Ubuntu 18.04 running on Intel x64 architecture.
 * **armv7l** (32 bit) tagged as `:armv7l`, verified on Raspberry Pi 3B running Raspbian Lite OS.
@@ -34,7 +34,7 @@ docker run -d \
 * Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
 * Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
 * Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
-* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, you can build your own image.
+* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, start by manually building your own image first (see below).
 
 ### Run as a Docker Swarm Service
 
@@ -55,12 +55,12 @@ docker service create \
 * Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
 * Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
 * The specified locations **need to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, start by [manually building your own image first](#Manually%20Building%20the%20Image).
+* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, start by manually building your own image first (see below).
 
 ### Manually Building the Image
 
-1. Obtain the [Dockerfile](Dockerfile) by cloning the repository or by downloading only the file.
-2. Build the docker image based on the provided [Dockerfile](Dockerfile):
+1. Obtain the Dockerfile by cloning the repository or by downloading only the file.
+2. Build the docker image based on the provided Dockerfile:
 
     ```shell
     docker build \
@@ -71,7 +71,7 @@ docker service create \
 
     * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
     * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
-3. Run as a [Docker container](#Run$%20as%20a%20Docker%20Container) or as a [Docker Swarm service](#Run$%20as%20a%20Docker%20Swarm%20Service).
+3. Run as a Docker container or as a Docker Swarm service (see above).
 
 ### Settings.json
 
@@ -131,7 +131,7 @@ This section provides information about all interfaces (state information + comm
   * UID and GID can be passed as build-time variables using the `--build-arg` argument to `docker build`.
   * Note: It is important that the explicit UID/GID are assigned, rather than just user name and group name.
 
-## Sources
+## External Sources
 
 * https://github.com/transmission/transmission/wiki/Configuration-Files
 * https://github.com/transmission/transmission/wiki/Environment-Variables
