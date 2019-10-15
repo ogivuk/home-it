@@ -1,22 +1,85 @@
 # Transmission as a Docker Container
 
-2018-10-29, Ognjen Vuković
+[**Transmission**](https://transmissionbt.com/) is a lightweight, fast, and free BitTorrent client.
 
-## Description
+The goal of this repository is to provide means to create a stateless container running transmission that is:
 
-**Transmission** is a lightweight BitTorrent client which features a variety of user interfaces on top of a cross-platform back-end.
+* based on an image built from scratch (well known image + installation) using a Dockerfile. The Dockerfile is provided in this repository.
+* stateless, with all interfaces (state information + communication ports) well defined. More information about the interfaces can be found [below](#Interfaces).
 
-The goal of this guide is to create a stateless container running transmission that is:
+The supported architectures are:
 
-* based on an image built from scratch (well known image + installation) using a Dockerfile.
-* stateless, with all interfaces (state information + communication ports) well defined.
+* **x64** (default) tagged as `:latest` and `:x64`, verified on Ubuntu 18.04 running on Intel x64 architecture.
+* **armv7l** (32 bit) tagged as `:armv7l`, verified on Raspberry Pi 3B running Raspbian Lite OS.
 
-The guide has been verified on:
+## Usage
 
-* Raspberry Pi running Raspbian Lite OS (ARM architecture)
-* Ubuntu 18.04 (Intel x64 architecture)
+### Run as a Docker Container
 
-### Container Interfaces
+```shell
+docker run -d \
+    --name=transmission \
+    --restart unless-stopped \
+    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
+    --volume /path/to/dir/for/transmission/config:/transmission/config \
+    --volume /path/to/dir/for/downloads:/transmission/downloads \
+    --volume /path/to/dir/for/transmission/watch:/transmission/watch \
+    ogivuk/transmission
+```
+
+* `--name=transmission` names the container as `transmission`, and it can be replaced with another desired name.
+* `--restart unless-stopped` configures the restart policy to always restart the container if it stops, except when the container is stopped manually.
+* `--publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp` exposes the required ports.
+* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
+* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
+* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, you can build your own image.
+
+### Run as a Docker Swarm Service
+
+```shell
+docker service create \
+    --name=transmission \
+    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
+    --mount type=bind,src=/path/to/dir/for/transmission/config,dst=/transmission/config \
+    --mount type=bind,src=/path/to/dir/for/downloads,dst=/transmission/downloads \
+    --mount type=bind,src=/path/to/dir/for/transmission/watch,dst=/transmission/watch \
+    ogivuk/transmission
+```
+
+* `--name=transmission` names the service as `transmission`, and it can be replaced with another desired name.
+* `--publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp` exposes the required ports.
+* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host. Optionally, you can copy there and use the provided [settings](settings.json) file.
+* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
+* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
+* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
+* The specified locations **need to be available on all nodes in Docker swarm**, e.g., via network shared storage.
+* Note that the directories and the downloaded files will be **owned by the default user with UID=1000 and GID=1000**. If that's not desired, start by [manually building your own image first](#Manually%20Building%20the%20Image).
+
+### Manually Building the Image
+
+1. Obtain the [Dockerfile](Dockerfile) by cloning the repository or by downloading only the file.
+2. Build the docker image based on the provided [Dockerfile](Dockerfile):
+
+    ```shell
+    docker build \
+      --build-arg TUID=$(id -u $USER) \
+      --build-arg TGID=$(id -g $USER) \
+      -t ogivuk/transmission .
+    ```
+
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
+    * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
+3. Run as a [Docker container](#Run$%20as%20a%20Docker%20Container) or as a [Docker Swarm service](#Run$%20as%20a%20Docker%20Swarm%20Service).
+
+### Settings.json
+
+The github repository provides an example of the `settings.json` file that can be copied to the `config` folder and used by `transmission`. Note that the provided configuration **is not secure**, and you should consider enabling the rpc authentication and the host whitelist.
+
+## Interfaces
+
+This section provides information about all interfaces (state information + communication ports) that should be taken care of to trully run the container as stateless.
 
 **Transmission state information** is preserved in the following directories:
 
@@ -67,88 +130,6 @@ The guide has been verified on:
   * The `USER` instruction in Dockerfile sets the user UID and optionally the user group GID.
   * UID and GID can be passed as build-time variables using the `--build-arg` argument to `docker build`.
   * Note: It is important that the explicit UID/GID are assigned, rather than just user name and group name.
-
-## Prerequisites
-
-* Host running Linux
-* Docker installed
-* The guide [Install Raspbian with SSH](../raspberry-pi/Install%20Raspbian%20with%20SSH.md) covers the necessary steps for a Raspberry Pi host.
-
-## Step-by-Step Guide
-
-### Prepare Environment
-
-1. Build the docker image based on the provided [Dockerfile](Dockerfile):
-
-    ```shell
-    docker build \
-      --build-arg TUID=$(id -u $USER) \
-      --build-arg TGID=$(id -g $USER) \
-      -t home-it/transmission .
-    ```
-    * `--build-arg TUID=$(id -u $USER)` passes the current user's UID so that all files created by transmission will be owned by the current user.
-    * `--build-arg TUID=$(id -u $USER)` passes the current user's GID so that all files created by transmission will be owned by the current user's group.
-2. Prepare/create directories on the host
-
-    * If they do not already exist, create directories on the host for storing configuration files, watch files, and downloaded files. Optionally, also create a directory for incomplete files, if a dedicated one is used.
-    ```shell
-    mkdir -p /path/to/dir/for/transmission/config
-    mkdir -p /path/to/dir/for/downloads
-    mkdir -p /path/to/dir/for/transmission/watch
-    ```
-    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
-    * replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
-    * replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
-3. [Optional] Use the provided `settings.json` file.
-
-    ```shell
-    cp settings.json /path/to/dir/for/transmission/config
-    ```
-    * replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
-    * note that the provided configuration **is not secure**. Consider enabling the rpc authentication and the host whitelist.
-
-### Start Transmission
-
-#### On a Docker Host
-
-```shell
-docker run -d \
-    --name=transmission \
-    --restart always \
-    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
-    --volume /path/to/dir/for/transmission/config:/transmission/config \
-    --volume /path/to/dir/for/downloads:/transmission/downloads \
-    --volume /path/to/dir/for/transmission/watch:/transmission/watch \
-    home-it/transmission
-```
-* `--name=transmission` names the container as `transmission`, and it can be replaced with another desired name.
-* `--restart always` configures the restart policy to always restart the container if it stops.
-* `--publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp` exposes the required ports.
-* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
-* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
-* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
-* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
-
-#### In a Docker Swarm
-
-```shell
-docker service create \
-    --name=transmission \
-    --publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp \
-    --mount type=bind,src=/path/to/dir/for/transmission/config,dst=/transmission/config \
-    --mount type=bind,src=/path/to/dir/for/downloads,dst=/transmission/downloads \
-    --mount type=bind,src=/path/to/dir/for/transmission/watch,dst=/transmission/watch \
-    home-it/transmission
-```
-* `--name=transmission` names the service as `transmission`, and it can be replaced with another desired name.
-* `--publish 9091:9091 --publish 51413:51413 --publish 51413:51413/udp` exposes the required ports.
-* Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory on the host.
-    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Replace `/path/to/dir/for/downloads` with the actual location where the downloaded files should be saved on the host.
-    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Replace `/path/to/dir/for/transmission/watch` with the actual location where transmission should watch for torrent files on the host.
-    * This location **needs to be available on all nodes in Docker swarm**, e.g., via network shared storage.
-* Optionally, also bind mount the directory for incomplete files, if a dedicated one is used.
 
 ## Sources
 
