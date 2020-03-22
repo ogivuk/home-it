@@ -8,4 +8,4 @@ RUN mkdir /root/duckdns
 
 RUN echo "*/5 * * * * sh /root/duckdns/duck.sh" >> /etc/crontabs/root
 
-CMD crond
+CMD ["crond", "-f"]
