@@ -33,7 +33,7 @@ Supported architectures:
       ```
 
     2. create the duckdns update script `duck.sh` for your domain, as described in [Duck DNS install](https://www.duckdns.org/install.jsp)
-      * **only the part** the 2 steps with `vi duck.sh` and `echo url=...`, **do not** set up the cron!
+      * **only the 2 steps** `vi duck.sh` and `echo url=...`. **Do not** set up the cron!
 2. Start the client
     * as a container:
 
