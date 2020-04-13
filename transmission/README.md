@@ -30,7 +30,7 @@ If you do not have a config file already, you can download one from:
     ``` shell
     mkdir -p ~/Downloads/transmission/config
     cd ~/Downloads/transmission/config
-    wget https://raw.githubusercontent.com/ognjenvukovic/home-it/master/transmission/settings.json
+    wget https://raw.githubusercontent.com/ogivuk/home-it/master/transmission/settings.json
     ```
 
    * this step is necessary as docker volume mount will lose the default config file in the container.
@@ -69,7 +69,7 @@ If you do not have a config file already, you can download one from:
 
     ``` shell
     cd /path/to/dir/for/transmission/config
-    wget https://raw.githubusercontent.com/ognjenvukovic/home-it/master/transmission/settings.json
+    wget https://raw.githubusercontent.com/ogivuk/home-it/master/transmission/settings.json
     ```
 
    * Replace `/path/to/dir/for/transmission/config` with the actual location of the transmission configuration directory reachable by all Swarm nodes.
