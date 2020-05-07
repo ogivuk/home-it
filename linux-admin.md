@@ -45,8 +45,10 @@ Useful options:
 * `-v` increases verbosity. Without this option, rsync works silently.
 * `--delete` tells rsync to delete files from the receiving side that are not on the sending side.
 * `--exclude=PATTERN` exclude files matching PATTERN
+* `--size-only` skips files that match in size, even if the timestamps differ
 * `--dry-run` makes rsync perform a trial run that doesn’t make any changes. Use with `-v`
 * `--files-from=FILE` specifies the exact list of files to transfer, where the filenames are all relative to the source directory
+* `-e "ssh -F /path/to/configfile"` specifies the exact `ssh` command to use for remote sync
 
 # Links
 
